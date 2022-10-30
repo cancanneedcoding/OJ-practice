@@ -1,2 +1,2 @@
 # OJ-practice
-记录Codeforces、Atcoder、LeetCode等OJ题
+记录 $Codeforces、Atcoder、LeetCode$ 等OJ题
