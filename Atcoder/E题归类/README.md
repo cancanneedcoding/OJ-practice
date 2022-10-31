@@ -1,2 +1,2 @@
 
-主要记录 $Atcoder$ 中的ABC的E题
+主要记录 $Atcoder$ 中的 $ABC$ 的E题
