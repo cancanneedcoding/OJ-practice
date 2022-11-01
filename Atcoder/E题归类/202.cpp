@@ -2,87 +2,65 @@
 using namespace std;
 typedef long long LL;
 typedef unsigned long long uLL;
-typedef pair<int,int> PII;
+typedef pair<int, int> PII;
 #define pb(s) push_back(s);
-#define SZ(s) (int)s.size();
+#define SZ(s) ((int)s.size());
 #define ms(s,x) memset(s, x, sizeof(s))
 #define all(s) s.begin(),s.end()
 const int inf = 0x3f3f3f3f;
 const int mod = 1000000007;
-const int N=200010;
+const int N = 200010;
 
-struct Tree {
-    int n;
-    std::vector<int> siz, top, dep, parent, in, out;
-    std::vector<std::vector<int>> adj;
-    Tree(int n) : n(n), siz(n), top(n), dep(n), parent(n, -1), in(n), out(n), adj(n) {}
-    void addEdge(int u, int v) {
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+//把同一个深度的元素放一起，然后因为要保证是u的子节点，
+//所以dfs序大小一定被包含在in[u]与out[u]之间
+int n, q;
+int in[N], out[N], dep[N];
+std::vector<int> e[N], g[N];
+int tot;
+void dfs(int u)
+{
+    in[u] = tot++;
+    g[dep[u]].push_back(in[u]);
+    for (int v : e[u])
+    {
+        dep[v] = dep[u] + 1;
+        dfs(v);
     }
-    void init(int root = 0) {
-        top[root] = root;
-        dfs1(root);
-        dfs2(root);
-    }
-    void dfs1(int u) {
-        if (parent[u] != -1) {
-            adj[u].erase(std::find(adj[u].begin(), adj[u].end(), parent[u]));
-        }      
-        siz[u] = 1;
-        for (auto &v : adj[u]) {
-            parent[v] = u;
-            dep[v] = dep[u] + 1;
-            dfs1(v);
-            siz[u] += siz[v];
-            if (siz[v] > siz[adj[u][0]]) {
-                std::swap(v, adj[u][0]);
-            }
-        }
-    }
-    int cur = 0;
-    void dfs2(int u) {
-        in[u] = ++cur;
-        for (auto v : adj[u]) {
-            top[v] = v == adj[u][0] ? top[u] : v;
-            dfs2(v);
-        }
-        out[u] = cur;
-    }
-    int lca(int u, int v) {
-        while (top[u] != top[v]) {
-            if (dep[top[u]] > dep[top[v]]) {
-                u = parent[top[u]];
-            } else {
-                v = parent[top[v]];
-            }
-        }
-        return dep[u] < dep[v] ? u : v;
-    }
-};
-int n;
+    out[u] = tot++;
+}
 void solve()
 {
-	cin>>n;
-	Tree tr(n+10);
-	for(int i=2;i<=n;++i){
-		int x;
-		cin>>x;
-		tr.addEdge(i,x);
-	}
-	tr.init(1);
-	for(int i=1;i<=n;++i){
-		cout<<tr.in[i]<<" "<<tr.out[i]<<'\n';
-	}
-}
-int main() 
-{
-	ios_base :: sync_with_stdio(false);
-    cin.tie(nullptr);	
-    int t=1;
-    while(t--)
+    cin >> n;
+    for (int i = 2; i <= n; ++i) {
+        int x;
+        cin >> x;
+        e[x].push_back(i);
+    }
+     dfs(1);
+    for (int i = 1; i <= n; ++i)
     {
-    	solve();
+        cout << in[i] << " " << out[i] << '\n';
+    }
+   
+    cin >> q;
+    while (q--)
+    {
+        int u, d;
+        cin >> u >> d;
+        int L = in[u], R = out[u];
+        auto it1 = lower_bound(g[d].begin(), g[d].end(), L);
+        auto it2 = upper_bound(g[d].begin(), g[d].end(), R);
+        //cout << (it2 - it1) << '\n';
+    }
+}
+int main()
+{
+    ios_base :: sync_with_stdio(false);
+    cin.tie(nullptr);
+    int t = 1;
+    while (t--)
+    {
+        solve();
     }
     return 0;
 }
